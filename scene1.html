@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scene 1 - Little Red Riding Hood</title>
+    <!-- Include A-Frame Library -->
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="js/gradientsky.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/feiss/aframe-gradient-sky@master/dist/aframe-gradient-sky.min.js"></script>
+    <script src="js/animation-mixer.js"></script>
+
+  </head>
+  <body>
+    
+    <!-- A-Frame Scene -->
+    <a-scene id="scene" fog="type: exponential; color: #cccccc; density: 0.07">
+      
+      <a-sound
+        id="backgroundSound"  
+        src="assets\audio\scene1.mp3" 
+        autoplay="true" 
+        loop="false" 
+        volume="50" 
+       ></a-sound>
+      
+
+
+      <a-entity gltf-model="assets/sky/scene.gltf" scale="1 1 1" position="0 0 0"></a-entity>
+
+      <!-- Forest Environment -->
+      <a-entity 
+      gltf-model="assets/models/forest/scene.gltf" 
+      position="0 -5 0" 
+      scale="0.6  0.6  0.6"
+      >
+    </a-entity>
+    <a-entity 
+      gltf-model="assets/models/farm.gltf" 
+      position="4 -22 -7.29"
+      rotation="0 270 0"  
+      scale="0.15  0.15  0.15">
+    </a-entity>
+    
+    <a-entity 
+      gltf-model="assets/models/little red riding/red_hood.glb" 
+      position="-5.4 -21.7 -9.92"
+      rotation="0 23 0" 
+      scale="0.25 0.25 0.25"
+      >
+    </a-entity>
+    <a-entity 
+      gltf-model="assets/models/little red riding/mother.glb" 
+      position="-4.51 -19.7 -8.36" 
+      rotation="0 220 0" 
+      scale="2 2 2"
+      >
+    </a-entity>
+   <!--Wolf-->
+    <a-entity 
+      id="model" 
+      gltf-model="assets/models/wolf/scene.gltf" 
+      position="1.8 -22 41.45"
+      rotation="0 190 0"  
+      scale="0.8 0.8  0.8"
+      animation-mixer="clip: metarig|Idle;loop: repeat"
+      >
+    </a-entity>
+
+     <!-- Camera -->
+      <a-entity 
+      id="camera" 
+      camera 
+      position="-97.26 32.39 7.8"
+      rotation="-45.84 -76.78 0" 
+      cursor
+      look-controls
+      wasd-controls="acceleration: 50; fly: true">
+      
+      <!-- Text Display as HUD -->
+      <a-entity 
+        id="positionDisplay" 
+        position="0 -0.5 -1" 
+        text="value: Position: 0, 0, 0; color: white; align: center; width: 2">
+      </a-entity>
+    </a-entity>
+      
+    <a-light type="directional" position="10 100 10" intensity="0.5" color="#ffffff"></a-light>
+    <a-light type="ambient" intensity="0.5" color="#ffffff"></a-light>
+  
+    </a-scene>
+    <script>
+        // Wait for the scene to load
+        document.addEventListener('DOMContentLoaded', () => {
+          // Get references to the camera and text display
+          const camera = document.querySelector('#camera');
+          const positionDisplay = document.querySelector('#positionDisplay');
+
+          // Update the text with the user's position and rotation
+          setInterval(() => {
+            // Get the camera's position
+            const position = camera.object3D.position;
+            const x = position.x.toFixed(2);
+            const y = position.y.toFixed(2);
+            const z = position.z.toFixed(2);
+
+            // Get the camera's rotation (convert radians to degrees)
+            const rotation = camera.object3D.rotation;
+            const rotX = THREE.MathUtils.radToDeg(rotation.x).toFixed(2);
+            const rotY = THREE.MathUtils.radToDeg(rotation.y).toFixed(2);
+            const rotZ = THREE.MathUtils.radToDeg(rotation.z).toFixed(2);
+
+            // Update the position and rotation display text
+            positionDisplay.setAttribute(
+              'text',
+              `value: Position: ${x}, ${y}, ${z}\nRotation: ${rotX}, ${rotY}, ${rotZ}`
+            );
+          }, 100); // Update every 100ms
+        });
+
+
+        // fog transition
+        document.addEventListener('DOMContentLoaded', () => {
+        const scene = document.querySelector('#scene');
+        let fogDensity = 0.07; // Initial fog density
+        const fadeDuration = 3000; // Duration of fade in milliseconds
+        const interval = 30; // Interval for updating fog density
+
+        // Calculate the step to reduce fog density each interval
+        const step = fogDensity / (fadeDuration / interval);
+
+        const fadeFog = setInterval(() => {
+          fogDensity -= step; // Reduce density gradually
+          if (fogDensity <= 0) {
+            fogDensity = 0; // Ensure it doesn't go negative
+            clearInterval(fadeFog); // Stop the interval once fog is fully faded
+          }
+          // Update the fog density in the scene
+          scene.setAttribute('fog', `type: exponential; color: #cccccc; density: ${fogDensity}`);
+        }, interval);
+      });
+
+    
+          
+        //disabling look controls at first
+          // Wait for the scene to load
+              document.addEventListener('DOMContentLoaded', () => {
+        const camera = document.querySelector('#camera');
+        const lookControls = camera.components['look-controls'];
+
+        // Set initial position and rotation
+        const initialPosition = { x: -97.26, y: 32.39, z: 7.8 };
+        const initialRotation = { x: -45.84, y: -76.78, z: 0 }; // Adjust values as needed
+
+        // Apply the initial position and rotation to the camera
+        camera.setAttribute('position', initialPosition);
+        camera.setAttribute('rotation', initialRotation);
+
+        // Ensure look-controls respects the initial rotation
+        if (lookControls) {
+          lookControls.pitchObject.rotation.x = THREE.MathUtils.degToRad(initialRotation.x); // Vertical (pitch)
+          lookControls.yawObject.rotation.y = THREE.MathUtils.degToRad(initialRotation.y); // Horizontal (yaw)
+        }
+      });
+  
+      //Camera
+      document.addEventListener('DOMContentLoaded', () => {
+        const camera = document.querySelector('#camera');
+        const lookControls = camera.components['look-controls'];
+        
+        // Function to smoothly transition camera position and rotation
+        const smoothTransition = (newPosition, newRotation, duration) => {
+          // Disable look-controls during transition
+          camera.setAttribute('look-controls', 'enabled: false');
+
+          // Animate position
+          camera.setAttribute('animation__position', {
+            property: 'position',
+            to: `${newPosition.x} ${newPosition.y} ${newPosition.z}`,
+            dur: 5000,
+            easing: 'easeInOutQuad'
+          });
+
+          // Animate rotation
+          camera.setAttribute('animation__rotation', {
+            property: 'rotation',
+            to: `${newRotation.x} ${newRotation.y} ${newRotation.z}`,
+            dur: 5000,
+            easing: 'easeInOutQuad'
+          });
+
+          // Re-enable look-controls after animation
+          setTimeout(() => {
+                  // Copy the new rotation to look-controls
+            const lookControls = camera.components['look-controls'];
+            if (lookControls) {
+              lookControls.pitchObject.rotation.x = THREE.MathUtils.degToRad(newRotation.x);
+              lookControls.yawObject.rotation.y = THREE.MathUtils.degToRad(newRotation.y);
+            }
+
+            // Re-enable look-controls
+            camera.setAttribute('look-controls', 'enabled: true');
+            if (callback) {
+              callback(); // Execute additional logic if provided
+            }
+          }, duration);
+        };
+
+        // Schedule transitions
+        setTimeout(() => {
+          // Transition to the house
+          smoothTransition({ x: -14.3, y: -19.49, z: -0.65 }, { x: 3.44, y:-60.62, z: 0 }, 3000);
+        }, 2000); // Start after 2 seconds
+
+        setTimeout(() => {
+          // Transition to the wolf hiding
+          smoothTransition({ x: 0.93, y:-19.7, z: 44.11 }, { x: -6.53, y:-3.9, z: 0 }, 3000);
+        }, 27000); // Start after 7 seconds
+
+        setTimeout(() => {
+          // Transition to the wolf hiding
+          smoothTransition({ x: -1.74, y:-19.95, z: 35.41 }, { x: -7.33, y:-159.86, z: 0 }, 3000);
+        }, 32000); // Start after 7 seconds
+      });
+    </script>
+  </body>
+</html>

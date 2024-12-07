@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      
+
+ 
+      <!-- Camera -->
+      <a-entity 
+      id="camera" 
+      camera  
+      position="6.78 -3.81 35.87" 
+      cursor
+      look-controls 
+      wasd-controls="acceleration: 100; fly: true">
+      
+      <!-- Text Display as HUD -->
+      <a-entity 
+        id="positionDisplay" 
+        position="0 -0.5 -1" 
+        text="value: Position: 0, 0, 0; color: white; align: center; width: 2">
+      </a-entity>
+      <a-cursor 
+        color="white" 
+        fuse="true" 
+        fuse-timeout="1000">
+      </a-cursor>
+    </a-entity>
+      <a-entity 
+          gltf-model="assets\Library\cozy_reading_nook.glb" 
+          scale="0.1 0.1 0.1" 
+          rotation="0 0 0" 
+          position="0 0 0 ">
+        </a-entity>
+        
+      </a-entity>
+      
+      <a-entity onclick="navigateToBook1()">
+        <a-box 
+        id="bookFrame"
+        position="-4.87 -5.5 53.20"
+        rotation="0 0 0"
+        width="4"
+        height="5"
+        depth="0.1"
+        color="#ffffff"
+        material="src: assets/images/cover.png; repeat: 1 1"  
+        event-set__mouseenter="color: #cccccc"
+        event-set__mouseleave="color: #ffffff"
+        >
+      </a-box>
+        </a-entity>
+
+      <!-- Lighting -->
+      <a-light type="hemisphere" intensity="1" color="#ffffff" groundColor="#aaaaaa" position="12.22 45.84 49.39"></a-light>
+      <a-light type="directional" position="12.22 45.84 49.39" intensity="1" color="#ffffff" cast-shadow="true"></a-light>
+    </a-scene>
+   <script>
+    // Wait for the scene to load
+    document.addEventListener('DOMContentLoaded', () => {
+          // Get references to the camera and text display
+          const camera = document.querySelector('#camera');
+          const positionDisplay = document.querySelector('#positionDisplay');
+  
+          // Update the text with the user's position
+          setInterval(() => {
+            const position = camera.object3D.position;
+            const x = position.x.toFixed(2);
+            const y = position.y.toFixed(2);
+            const z = position.z.toFixed(2);
+  
+            // Update the position display text
+            positionDisplay.setAttribute('text', `value: Position: ${x}, ${y}, ${z}`);
+          }, 100); // Update every 100ms
+
+          
+        });
+        //go to book1
+        function navigateToBook1() {
+            console.log('Navigating to Scene 1...');
+            window.location.href = "scene1.html"; // Replace with the correct path to scene1.html
+        }
+   </script>
